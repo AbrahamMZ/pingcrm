@@ -43,9 +43,7 @@ class MachineryController extends Controller
     public function create()
     {
         return Inertia::render('Machinery/Create', [
-            'categories' => Category::all('id', 'name')->map(function ($item) {
-                return ['value' => $item->id, 'text' => $item->name];
-            })
+            'formOptions' => $this->getOptionsForm()
 
         ]);
     }
@@ -60,14 +58,15 @@ class MachineryController extends Controller
     {
         Machinery::create(
             Request::validate([
-                'category_id' => ['required', 'max:100', Rule::unique('machineries')],
-                'no_serie' => ['required', 'max:100'],
+                'category_id' => ['required', 'max:100'],
+                'no_serie' => ['required', 'max:100', Rule::unique('machineries')],
                 'model' => ['required'],
                 'price' => ['required'],
             ])
         );
 
-        return Redirect::route('machineries')->with('success', 'Maquinaria Registrada con Exito.');
+        return Redirect::route('machineries')
+            ->with('success', 'Maquinaria Registrada con Exito.');
     }
 
     /**
@@ -101,9 +100,7 @@ class MachineryController extends Controller
     public function edit(Machinery $machinery)
     {
         return Inertia::render('Machinery/Edit', [
-            'categories' => Category::all('id', 'name')->map(function ($item) {
-                return ['value' => $item->id, 'text' => $item->name];
-            }),
+            'formOptions' => $this->getOptionsForm(),
             'item' => [
                 'id' => $machinery->id,
                 'category_id' => $machinery->category_id,
@@ -128,8 +125,8 @@ class MachineryController extends Controller
     {
         $machinery->update(
             Request::validate([
-                'category_id' => ['required', 'max:100', Rule::unique('machineries')],
-                'no_serie' => ['required', 'max:100'],
+                'category_id' => ['required', 'max:100'],
+                'no_serie' => ['required', 'max:100', Rule::unique('machineries')->ignore($machinery->id)],
                 'model' => ['required'],
                 'price' => ['required'],
             ])
@@ -162,5 +159,14 @@ class MachineryController extends Controller
         $machinery->restore();
 
         return Redirect::back()->with('success', 'Maquinaria restored.');
+    }
+
+    public function getOptionsForm()
+    {
+        return  [
+            'categories' => Category::all('id', 'name')->map(function ($item) {
+                return ['value' => $item->id, 'text' => $item->name];
+            })
+        ];
     }
 }

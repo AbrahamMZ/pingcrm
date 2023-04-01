@@ -99,7 +99,7 @@ export default {
         { text: "ID", width: "75", value: "id" },
         { text: "Categoria ", value: "category" },
         { text: "No. Serie", value: "no_serie" },
-        { text: "Precio", value: "price" },
+        { text: "Costo del Equipo", value: "price" },
         {
           text: "",
           align: "end",
